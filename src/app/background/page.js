@@ -83,7 +83,7 @@ export default function Background() {
                 <h3 className="font-semibold text-blue-900 mb-2">💡 How it works:</h3>
                 <ul className="text-sm text-blue-800 space-y-1">
                   <li>• Enter a valid API key from your dashboard</li>
-                  <li>• Click "Access Playground" to validate your key</li>
+                  <li>• Click &quot;Access Playground&quot; to validate your key</li>
                   <li>• If valid, you&apos;ll be taken to the protected playground area</li>
                   <li>• If invalid, you&apos;ll receive an error message</li>
                 </ul>

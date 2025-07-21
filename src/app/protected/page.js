@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../../components/Sidebar';
 import Header from '../../components/Header';
@@ -31,7 +31,7 @@ export default function Protected() {
   };
 
   // Validate API key
-  const validateApiKey = async () => {
+  const validateApiKey = useCallback(async () => {
     try {
       const submittedApiKey = sessionStorage.getItem('submittedApiKey');
       
@@ -68,12 +68,12 @@ export default function Protected() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showToast, router, setIsValidated, setKeyInfo, setLoading]);
 
   useEffect(() => {
     setMounted(true);
     validateApiKey();
-  }, []);
+  }, [validateApiKey]);
 
   // Prevent hydration mismatch
   if (!mounted) {
