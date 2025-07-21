@@ -18,20 +18,20 @@ export default function Protected() {
   });
   const router = useRouter();
 
-  // Show toast notification
-  const showToast = (type, message) => {
-    setToast({
-      show: true,
-      type,
-      message
-    });
-    setTimeout(() => {
-      setToast(prev => ({ ...prev, show: false }));
-    }, 3000);
-  };
-
   // Validate API key
   const validateApiKey = useCallback(async () => {
+    // Show toast notification (moved inside useCallback)
+    const showToast = (type, message) => {
+      setToast({
+        show: true,
+        type,
+        message
+      });
+      setTimeout(() => {
+        setToast(prev => ({ ...prev, show: false }));
+      }, 3000);
+    };
+
     try {
       const submittedApiKey = sessionStorage.getItem('submittedApiKey');
       
@@ -68,7 +68,7 @@ export default function Protected() {
     } finally {
       setLoading(false);
     }
-  }, [showToast, router, setIsValidated, setKeyInfo, setLoading]);
+  }, [router, setIsValidated, setKeyInfo, setLoading, setToast]);
 
   useEffect(() => {
     setMounted(true);
