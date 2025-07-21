@@ -9,15 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
-    "next": "15.4.2"
+    "@langchain/anthropic": "^0.3.24",
+    "@langchain/community": "^0.3.49",
+    "@langchain/core": "^0.3.66",
+    "@langchain/google-genai": "^0.2.15",
+    "@langchain/openai": "^0.6.2",
+    "@supabase/supabase-js": "^2.52.0",
+    "langchain": "^0.3.30",
+    "next": "15.4.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
     "eslint": "^9",
     "eslint-config-next": "15.4.2",
-    "@eslint/eslintrc": "^3"
+    "tailwindcss": "^4"
   }
 }
