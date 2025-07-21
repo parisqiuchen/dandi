@@ -49,10 +49,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token
     },
     async session({ session, token }) {
-      if (token) {
-        session.accessToken = token.accessToken as string
-        session.user.id = token.dbUserId as string || token.sub as string
-        session.provider = token.provider as string
+      if (token && session) {
+        session.accessToken = (token.accessToken as string) || undefined
+        if (session.user) {
+          session.user.id = (token.dbUserId as string) || (token.sub as string) || ''
+        }
+        session.provider = (token.provider as string) || undefined
       }
       return session
     },
