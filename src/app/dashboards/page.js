@@ -182,11 +182,11 @@ export default function Dashboard() {
         <Sidebar />
 
         {/* Main Content */}
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-hidden lg:ml-0">
           <Header />
 
           {/* Content Area */}
-          <div className="p-8 bg-gradient-to-br from-purple-400 via-pink-400 to-blue-500 min-h-screen">
+          <div className="p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-purple-400 via-pink-400 to-blue-500 min-h-screen">
             <div className="max-w-7xl mx-auto">
               <PlanCard apiKeys={apiKeys} />
               <ApiKeysTable 

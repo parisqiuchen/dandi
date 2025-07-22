@@ -17,9 +17,9 @@ export default function LandingPage() {
       <header className="px-4 lg:px-6 h-14 flex items-center border-b">
         <Link className="flex items-center justify-center" href="/">
           <Github className="h-6 w-6 mr-2" />
-          <span className="font-bold text-xl">Dandi</span>
+          <span className="font-bold text-lg sm:text-xl">Dandi</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
+        <nav className="ml-auto hidden md:flex gap-4 sm:gap-6">
           <Link className="text-sm font-medium hover:underline underline-offset-4" href="#features">
             Features
           </Link>
@@ -37,24 +37,24 @@ export default function LandingPage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
+        <section className="w-full py-8 sm:py-12 md:py-24 lg:py-32 xl:py-48">
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-              <div className="flex flex-col justify-center space-y-4">
+              <div className="flex flex-col justify-center space-y-4 order-2 lg:order-1">
                 <div className="space-y-2">
                   <Badge variant="secondary" className="w-fit">
                     <Zap className="w-3 h-3 mr-1" />
                     AI-Powered Insights
                   </Badge>
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                  <h1 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl/none">
                     Unlock Deep Insights from Any GitHub Repository
                   </h1>
-                  <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                  <p className="max-w-[600px] text-sm sm:text-base text-muted-foreground md:text-xl">
                     Get comprehensive analysis, trending metrics, and actionable insights from open source repositories.
                     Track stars, pull requests, releases, and discover hidden gems in the GitHub ecosystem.
                   </p>
                 </div>
-                <div className="flex flex-col gap-2 min-[400px]:flex-row">
+                <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
                   {session ? (
                     <>
                       <Link href="/dashboards">
@@ -78,7 +78,7 @@ export default function LandingPage() {
                     </>
                   )}
                 </div>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
                     <Check className="h-4 w-4 text-green-500" />
                     {session ? "Dashboard access enabled" : "Free tier available"}
@@ -89,13 +89,13 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-center">
+              <div className="flex items-center justify-center order-1 lg:order-2">
                 <Image
                   src="/placeholder.svg?height=400&width=600"
                   width="600"
                   height="400"
                   alt="Dandi GitHub Analyzer Dashboard"
-                  className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center"
+                  className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center w-full max-w-sm sm:max-w-md lg:max-w-none"
                 />
               </div>
             </div>
@@ -103,21 +103,21 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+        <section id="features" className="w-full py-8 sm:py-12 md:py-24 lg:py-32 bg-muted">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <Badge variant="secondary">Features</Badge>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl">
                   Everything You Need to Analyze GitHub Repositories
                 </h2>
-                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                <p className="max-w-[900px] text-sm sm:text-base text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   From basic metrics to advanced insights, Dandi provides comprehensive analysis tools for developers,
                   researchers, and organizations.
                 </p>
               </div>
             </div>
-            <div className="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
+            <div className="mx-auto grid max-w-5xl items-start gap-4 sm:gap-6 py-8 sm:py-12 grid-cols-1 md:grid-cols-2 lg:gap-12">
               <div className="grid gap-6">
                 <Card>
                   <CardHeader>
@@ -181,20 +181,20 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="w-full py-12 md:py-24 lg:py-32">
+        <section id="pricing" className="w-full py-8 sm:py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <Badge variant="secondary">Pricing</Badge>
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl">
                   Simple, Transparent Pricing
                 </h2>
-                <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                <p className="mx-auto max-w-[700px] text-sm sm:text-base text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   Start free and scale as you grow. No hidden fees, no surprises.
                 </p>
               </div>
             </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 max-w-5xl mx-auto mt-12">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8 max-w-5xl mx-auto mt-8 sm:mt-12">
               {/* Free Tier */}
               <Card className="relative">
                 <CardHeader>
@@ -319,18 +319,18 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+        <section className="w-full py-8 sm:py-12 md:py-24 lg:py-32 bg-muted">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+                <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl">
                   Ready to Discover GitHub Insights?
                 </h2>
-                <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                <p className="mx-auto max-w-[600px] text-sm sm:text-base text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   Join thousands of developers who use Dandi to make better decisions about open source projects.
                 </p>
               </div>
-              <div className="flex flex-col gap-2 min-[400px]:flex-row">
+              <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
                 {session ? (
                   <>
                                          <Link href="/dashboards">
@@ -363,9 +363,9 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-muted-foreground">© 2024 Dandi GitHub Analyzer. All rights reserved.</p>
-        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
+      <footer className="flex flex-col gap-3 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
+        <p className="text-xs text-muted-foreground text-center sm:text-left">© 2024 Dandi GitHub Analyzer. All rights reserved.</p>
+        <nav className="sm:ml-auto flex flex-wrap justify-center sm:justify-end gap-4 sm:gap-6">
           <Link className="text-xs hover:underline underline-offset-4" href="#">
             Terms of Service
           </Link>
