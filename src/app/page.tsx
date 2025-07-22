@@ -237,12 +237,13 @@ export default function LandingPage() {
               </Card>
 
               {/* Pro Tier */}
-              <Card className="relative border-primary">
+              <Card className="relative border-primary opacity-75">
                 <Badge className="absolute -top-2 left-1/2 -translate-x-1/2">Most Popular</Badge>
+                <Badge variant="coming-soon" className="absolute -top-2 -right-2">Coming Soon</Badge>
                 <CardHeader>
-                  <CardTitle className="text-2xl">Pro</CardTitle>
+                  <CardTitle className="text-2xl text-gray-600">Pro</CardTitle>
                   <CardDescription>For serious developers and teams</CardDescription>
-                  <div className="text-4xl font-bold">
+                  <div className="text-4xl font-bold text-gray-600">
                     $19<span className="text-base font-normal text-muted-foreground">/month</span>
                   </div>
                 </CardHeader>
@@ -271,16 +272,19 @@ export default function LandingPage() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button variant="hero" className="w-full">Start Pro Trial</Button>
+                  <Button variant="outline" disabled className="w-full opacity-50 cursor-not-allowed">
+                    Coming Soon
+                  </Button>
                 </CardFooter>
               </Card>
 
               {/* Enterprise Tier */}
-              <Card className="relative">
+              <Card className="relative opacity-75">
+                <Badge variant="coming-soon" className="absolute -top-2 -right-2">Coming Soon</Badge>
                 <CardHeader>
-                  <CardTitle className="text-2xl">Enterprise</CardTitle>
+                  <CardTitle className="text-2xl text-gray-600">Enterprise</CardTitle>
                   <CardDescription>For organizations and teams</CardDescription>
-                  <div className="text-4xl font-bold">
+                  <div className="text-4xl font-bold text-gray-600">
                     $99<span className="text-base font-normal text-muted-foreground">/month</span>
                   </div>
                 </CardHeader>
@@ -309,8 +313,8 @@ export default function LandingPage() {
                   </ul>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200" variant="outline">
-                    Contact Sales
+                  <Button variant="outline" disabled className="w-full opacity-50 cursor-not-allowed">
+                    Coming Soon
                   </Button>
                 </CardFooter>
               </Card>

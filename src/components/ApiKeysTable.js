@@ -7,7 +7,8 @@ export default function ApiKeysTable({
   handleDelete, 
   setShowForm, 
   setEditingKey, 
-  setFormData 
+  setFormData,
+  loading = false
 }) {
   return (
     <div className="bg-white rounded-3xl shadow-xl">

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchGitHubReadme, isValidGitHubUrl, parseGitHubUrl } from '../../../lib/github';
+import { fetchGitHubReadme, fetchGitHubRepoMetadata, isValidGitHubUrl, parseGitHubUrl } from '../../../lib/github';
 import { summarizeReadmeWithLangChain, analyzeReadmeContent } from '../../../lib/langchain';
 import { authenticateApiKey } from '../../../lib/api-auth';
 
@@ -13,7 +13,6 @@ export async function POST(request) {
       return NextResponse.json(
         {
           error: authResult.error,
-          valid: false,
           message: authResult.message
         },
         { status: authResult.status }
@@ -62,19 +61,16 @@ export async function POST(request) {
     // Extract owner and repo from URL
     const { owner, repo } = parseGitHubUrl(repositoryUrl);
 
-    // Fetch README.md content from GitHub
-    const readmeResult = await fetchGitHubReadme(owner, repo);
+    // Fetch README.md content and repository metadata from GitHub in parallel
+    const [readmeResult, metadataResult] = await Promise.all([
+      fetchGitHubReadme(owner, repo),
+      fetchGitHubRepoMetadata(owner, repo)
+    ]);
 
     if (!readmeResult.success) {
       return NextResponse.json({
-        success: false,
         error: readmeResult.error,
-        message: readmeResult.message,
-        repository: {
-          owner,
-          repo,
-          url: repositoryUrl
-        }
+        message: readmeResult.message
       }, { status: 404 });
     }
 
@@ -86,74 +82,33 @@ export async function POST(request) {
     );
 
     if (!summarizationResult.success) {
-      // If AI summarization fails, provide basic content analysis
-      const basicAnalysis = analyzeReadmeContent(readmeResult.content);
-      
       return NextResponse.json({
-        success: false,
         error: summarizationResult.error,
-        message: summarizationResult.message,
-        errorCode: summarizationResult.errorCode,
-        repository: {
-          owner,
-          repo,
-          url: repositoryUrl
-        },
-        readme: {
-          fileName: readmeResult.fileName,
-          size: readmeResult.size,
-          content: readmeResult.content,
-          downloadUrl: readmeResult.downloadUrl,
-          htmlUrl: readmeResult.htmlUrl,
-          ...basicAnalysis
-        }
+        message: summarizationResult.message
       }, { status: 500 });
     }
 
-    // Get basic content analysis for additional insights
-    const basicAnalysis = analyzeReadmeContent(readmeResult.content);
+    // Create simplified response with only essential fields
+    const responseData = {
+      summary: summarizationResult.result.summary,
+      cool_facts: summarizationResult.result.cool_facts,
+    };
 
-    return NextResponse.json({
-      success: true,
-      message: 'GitHub repository analyzed successfully with AI',
-      data: {
-        repository: {
-          owner,
-          repo,
-          url: repositoryUrl
-        },
-        action: action || 'summarize',
-        keyInfo: {
-          id: keyData.id,
-          name: keyData.name,
-          type: keyData.type,
-          usageCount: usageInfo.currentUsage,
-          remainingUsage: usageInfo.remainingUsage
-        },
-        readme: {
-          fileName: readmeResult.fileName,
-          size: readmeResult.size,
-          content: readmeResult.content,
-          downloadUrl: readmeResult.downloadUrl,
-          htmlUrl: readmeResult.htmlUrl,
-          ...basicAnalysis
-        },
-        // AI-powered analysis using LangChain
-        analysis: {
-          summary: summarizationResult.result.summary,
-          cool_facts: summarizationResult.result.cool_facts,
-          status: 'completed',
-          ...summarizationResult.result.metadata
-        }
-      }
-    });
+    // Add repository metadata if available
+    if (metadataResult.success) {
+      responseData.stars = metadataResult.metadata.stars;
+      responseData.latestVersion = metadataResult.metadata.latestVersion?.tag || null;
+      responseData.websiteUrl = metadataResult.metadata.homepage || `https://github.com/${owner}/${repo}`;
+      responseData.licenseType = metadataResult.metadata.license?.spdxId || null;
+    }
+
+    return NextResponse.json(responseData);
 
   } catch (error) {
     console.error('GitHub summarizer API error:', error);
     return NextResponse.json(
       { 
-        error: 'Internal server error', 
-        valid: false,
+        error: 'Internal server error',
         message: 'An error occurred while processing the GitHub repository analysis.'
       },
       { status: 500 }

@@ -21,7 +21,7 @@ export async function validateApiKey(apiKey) {
     // Check if the API key exists in the database
     const { data: keyData, error } = await supabaseAdmin
       .from('api_keys')
-      .select('id, name, type, created_at, usage_count, monthly_limit, limit_monthly_usage')
+      .select('id, name, type, created_at, usage_count, monthly_limit, limit_monthly_usage, user_id')
       .eq('key', apiKey)
       .single();
 

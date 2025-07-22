@@ -1,12 +1,29 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '../../../lib/supabase';
+import { authenticateUserSession } from '../../../lib/session-auth';
 
-// GET - Fetch all API keys
-export async function GET() {
+// GET - Fetch all API keys for authenticated user
+export async function GET(request) {
   try {
+    // Authenticate user session
+    const authResult = await authenticateUserSession(request);
+    if (!authResult.authenticated) {
+      return NextResponse.json(
+        {
+          error: authResult.error,
+          message: authResult.message
+        },
+        { status: authResult.status }
+      );
+    }
+
+    const { user } = authResult;
+
+    // Fetch API keys only for this user
     const { data: apiKeys, error } = await supabaseAdmin
       .from('api_keys')
       .select('*')
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -17,7 +34,21 @@ export async function GET() {
       );
     }
 
-    return NextResponse.json(apiKeys);
+    // Convert snake_case to camelCase for frontend consistency
+    const formattedKeys = apiKeys.map(key => ({
+      id: key.id,
+      name: key.name,
+      type: key.type,
+      limitMonthlyUsage: key.limit_monthly_usage,
+      monthlyLimit: key.monthly_limit,
+      key: key.key,
+      createdAt: key.created_at,
+      lastUsed: key.last_used,
+      usageCount: key.usage_count,
+      userId: key.user_id
+    }));
+
+    return NextResponse.json(formattedKeys);
   } catch (error) {
     console.error('Server error:', error);
     return NextResponse.json(
@@ -27,9 +58,23 @@ export async function GET() {
   }
 }
 
-// POST - Create new API key
+// POST - Create new API key for authenticated user
 export async function POST(request) {
   try {
+    // Authenticate user session
+    const authResult = await authenticateUserSession(request);
+    if (!authResult.authenticated) {
+      return NextResponse.json(
+        {
+          error: authResult.error,
+          message: authResult.message
+        },
+        { status: authResult.status }
+      );
+    }
+
+    const { user } = authResult;
+
     const body = await request.json();
     const { name, type = 'development', limitMonthlyUsage = false, monthlyLimit = 1000 } = body;
 
@@ -46,6 +91,7 @@ export async function POST(request) {
       limit_monthly_usage: limitMonthlyUsage,
       monthly_limit: monthlyLimit,
       key: 'ak_' + Math.random().toString(36).substr(2, 32),
+      user_id: user.id, // Associate with authenticated user
       created_at: new Date().toISOString(),
       last_used: null,
       usage_count: 0
@@ -75,7 +121,8 @@ export async function POST(request) {
       key: data.key,
       createdAt: data.created_at,
       lastUsed: data.last_used,
-      usageCount: data.usage_count
+      usageCount: data.usage_count,
+      userId: data.user_id
     };
 
     return NextResponse.json(responseData, { status: 201 });

@@ -1,219 +1,59 @@
-'use client';
+import { supabaseAdmin } from '../../lib/supabase';
+import { auth } from '../../lib/auth';
+import { getUserByEmail } from '../../lib/userManager';
+import ClientDashboard from '../../components/ClientDashboard';
+import { redirect } from 'next/navigation';
 
-import { useState, useEffect } from 'react';
-import Sidebar from '../../components/Sidebar';
-import Toast from '../../components/Toast';
-import Header from '../../components/Header';
-import PlanCard from '../../components/PlanCard';
-import ApiKeyModal from '../../components/ApiKeyModal';
-import ApiKeysTable from '../../components/ApiKeysTable';
+// Server Component - runs on server, no 'use client' directive
+export default async function Dashboard() {
+  // Fetch data server-side during build/request
+  let apiKeys = [];
+  let error = null;
 
-export default function Dashboard() {
-  const [mounted, setMounted] = useState(false);
-  const [apiKeys, setApiKeys] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editingKey, setEditingKey] = useState(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    type: 'development',
-    limitMonthlyUsage: false,
-    monthlyLimit: 1000
-  });
-  const [visibleKeys, setVisibleKeys] = useState(new Set());
-  const [toast, setToast] = useState({
-    show: false,
-    type: 'success',
-    message: ''
-  });
-
-  // Fetch API keys
-  const fetchApiKeys = async () => {
-    try {
-      const response = await fetch('/api/api-keys');
-      const data = await response.json();
-      setApiKeys(data);
-    } catch (error) {
-      console.error('Error fetching API keys:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    setMounted(true);
-    fetchApiKeys();
-  }, []);
-
-  // Create or update API key
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const method = editingKey ? 'PUT' : 'POST';
-    const url = editingKey ? `/api/api-keys/${editingKey.id}` : '/api/api-keys';
+  try {
+    // Get authenticated session
+    const session = await auth();
     
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      
-      if (response.ok) {
-        await fetchApiKeys();
-        setShowForm(false);
-        setEditingKey(null);
-        setFormData({ name: '', type: 'development', limitMonthlyUsage: false, monthlyLimit: 1000 });
-        showToast('success', editingKey ? 'API Key updated successfully' : 'API Key created successfully');
-      }
-    } catch (error) {
-      console.error('Error saving API key:', error);
+    if (!session?.user?.email) {
+      redirect('/auth/signin');
     }
-  };
 
-  // Delete API key
-  const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to delete this API key?')) return;
+    // Get user from database
+    const dbUser = await getUserByEmail(session.user.email);
     
-    try {
-      const response = await fetch(`/api/api-keys/${id}`, {
-        method: 'DELETE',
-      });
-      
-      if (response.ok) {
-        await fetchApiKeys();
-        showToast('delete', 'API Key deleted successfully');
-      }
-    } catch (error) {
-      console.error('Error deleting API key:', error);
+    if (!dbUser) {
+      redirect('/auth/signin');
     }
-  };
 
-  // Toggle API key visibility
-  const toggleKeyVisibility = (keyId) => {
-    const newVisibleKeys = new Set(visibleKeys);
-    if (newVisibleKeys.has(keyId)) {
-      newVisibleKeys.delete(keyId);
-    } else {
-      newVisibleKeys.add(keyId);
+    // Fetch API keys only for this user
+    const { data, error: fetchError } = await supabaseAdmin
+      .from('api_keys')
+      .select('*')
+      .eq('user_id', dbUser.id)
+      .order('created_at', { ascending: false });
+
+    if (fetchError) {
+      throw fetchError;
     }
-    setVisibleKeys(newVisibleKeys);
-  };
 
-  // Show toast notification
-  const showToast = (type, message) => {
-    setToast({
-      show: true,
-      type,
-      message
-    });
-    setTimeout(() => {
-      setToast(prev => ({ ...prev, show: false }));
-    }, 3000);
-  };
-
-  // Copy API key to clipboard
-  const copyToClipboard = async (keyId, keyValue) => {
-    try {
-      await navigator.clipboard.writeText(keyValue);
-      showToast('success', 'Copied API Key to clipboard');
-    } catch (err) {
-      console.error('Failed to copy to clipboard:', err);
-      fallbackCopyTextToClipboard(keyValue);
-    }
-  };
-
-  // Fallback copy method for older browsers
-  const fallbackCopyTextToClipboard = (text) => {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    textArea.style.top = '0';
-    textArea.style.left = '0';
-    textArea.style.position = 'fixed';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    try {
-      document.execCommand('copy');
-      showToast('success', 'Copied API Key to clipboard');
-    } catch (err) {
-      console.error('Fallback: Could not copy text');
-    }
-    
-    document.body.removeChild(textArea);
-  };
-
-  // Start editing
-  const handleEdit = (key) => {
-    setEditingKey(key);
-    setFormData({
+    // Convert snake_case to camelCase for frontend consistency
+    apiKeys = data.map(key => ({
+      id: key.id,
       name: key.name,
-      type: key.type || 'development',
-      limitMonthlyUsage: key.limitMonthlyUsage || false,
-      monthlyLimit: key.monthlyLimit || 1000
-    });
-    setShowForm(true);
-  };
-
-  // Prevent hydration mismatch
-  if (!mounted) {
-    return null;
+      type: key.type,
+      limitMonthlyUsage: key.limit_monthly_usage,
+      monthlyLimit: key.monthly_limit,
+      key: key.key,
+      createdAt: key.created_at,
+      lastUsed: key.last_used,
+      usageCount: key.usage_count,
+      userId: key.user_id
+    }));
+  } catch (err) {
+    console.error('Error fetching API keys server-side:', err);
+    error = 'Failed to load API keys';
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-400 to-blue-500 flex items-center justify-center">
-        <div className="bg-white/20 backdrop-blur-sm rounded-3xl p-8 text-white">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <div className="text-lg font-medium">Loading...</div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <Toast toast={toast} setToast={setToast} />
-
-      {/* Main Layout */}
-      <div className="min-h-screen flex bg-gray-50">
-        <Sidebar />
-
-        {/* Main Content */}
-        <div className="flex-1 overflow-hidden lg:ml-0">
-          <Header />
-
-          {/* Content Area */}
-          <div className="p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-purple-400 via-pink-400 to-blue-500 min-h-screen">
-            <div className="max-w-7xl mx-auto">
-              <PlanCard apiKeys={apiKeys} />
-              <ApiKeysTable 
-                apiKeys={apiKeys}
-                visibleKeys={visibleKeys}
-                toggleKeyVisibility={toggleKeyVisibility}
-                copyToClipboard={copyToClipboard}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-                setShowForm={setShowForm}
-                setEditingKey={setEditingKey}
-                setFormData={setFormData}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <ApiKeyModal 
-        showForm={showForm}
-        setShowForm={setShowForm}
-        editingKey={editingKey}
-        setEditingKey={setEditingKey}
-        formData={formData}
-        setFormData={setFormData}
-        handleSubmit={handleSubmit}
-      />
-    </>
-  );
+  // Pass server-fetched data to client component
+  return <ClientDashboard initialApiKeys={apiKeys} initialError={error} />;
 } 
