@@ -23,6 +23,9 @@ export default function LandingPage() {
           <Link className="text-sm font-medium hover:underline underline-offset-4" href="#features">
             Features
           </Link>
+          <Link className="text-sm font-medium hover:underline underline-offset-4" href="#try-it-out">
+            Try it out
+          </Link>
           <Link className="text-sm font-medium hover:underline underline-offset-4" href="#pricing">
             Pricing
           </Link>
@@ -174,6 +177,148 @@ export default function LandingPage() {
                       Assess code quality, security practices, and maintenance status of open source projects.
                     </CardDescription>
                   </CardHeader>
+                </Card>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Try it out Section */}
+        <section id="try-it-out" className="w-full py-8 sm:py-12 md:py-24 lg:py-32">
+          <div className="container px-4 md:px-6">
+            <div className="flex flex-col items-center justify-center space-y-4 text-center mb-8 sm:mb-12">
+              <div className="space-y-2">
+                <Badge variant="secondary">
+                  <Zap className="w-3 h-3 mr-1" />
+                  Try it out
+                </Badge>
+                <h2 className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl">
+                  See Dandi in Action
+                </h2>
+                <p className="max-w-[700px] text-sm sm:text-base text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Experience the power of AI-driven GitHub analysis. Enter any repository URL and get instant insights.
+                </p>
+              </div>
+            </div>
+
+            <div className="max-w-6xl mx-auto">
+              <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
+                {/* Input Box */}
+                <Card className="h-fit">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Github className="h-5 w-5" />
+                      Repository Input
+                    </CardTitle>
+                    <CardDescription>
+                      Enter a GitHub repository URL to analyze
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">GitHub Repository URL</label>
+                      <div className="relative">
+                        <input
+                          type="url"
+                          placeholder="https://github.com/owner/repository"
+                          value="https://github.com/facebook/react"
+                          readOnly
+                          className="w-full px-3 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-gray-50 cursor-not-allowed"
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Demo shows analysis for Facebook&apos;s React repository
+                      </p>
+                    </div>
+
+                    <div className="pt-4">
+                      {session ? (
+                        <Link href="/background" className="w-full">
+                          <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium text-base py-6">
+                            🔍 Try the Real Playground
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </Link>
+                      ) : (
+                        <Link href="/auth/signin" className="w-full">
+                          <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-medium text-base py-6">
+                            🔐 Sign in to Try
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Results Box */}
+                <Card className="h-fit">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <BarChart3 className="h-5 w-5" />
+                      Analysis Results
+                    </CardTitle>
+                    <CardDescription>
+                      AI-powered insights and repository metrics
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Repository Info */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
+                        <div className="text-yellow-800 font-semibold text-xs">⭐ Stars</div>
+                        <div className="text-lg font-bold text-yellow-900">223,000</div>
+                      </div>
+                      <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                        <div className="text-green-800 font-semibold text-xs">🏷️ Version</div>
+                        <div className="text-sm font-bold text-green-900">v18.3.1</div>
+                      </div>
+                      <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                        <div className="text-blue-800 font-semibold text-xs">📜 License</div>
+                        <div className="text-sm font-bold text-blue-900">MIT</div>
+                      </div>
+                    </div>
+
+                    {/* Summary */}
+                    <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                      <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+                        <span>📝</span>
+                        <span className="text-sm">Summary</span>
+                      </h4>
+                      <p className="text-gray-700 text-xs leading-relaxed">
+                        React is a JavaScript library for building user interfaces, maintained by Meta. 
+                        It&apos;s component-based, declarative, and designed for creating interactive UIs with minimal effort.
+                      </p>
+                    </div>
+
+                    {/* Cool Facts */}
+                    <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                      <h4 className="font-bold text-purple-900 mb-2 flex items-center gap-2">
+                        <span>✨</span>
+                        <span className="text-sm">Cool Facts</span>
+                      </h4>
+                      <ul className="space-y-1">
+                        <li className="text-purple-800 flex items-start gap-2 text-xs">
+                          <span className="text-purple-600 mt-1">•</span>
+                          <span>Powers websites of Netflix, Instagram, and Airbnb</span>
+                        </li>
+                        <li className="text-purple-800 flex items-start gap-2 text-xs">
+                          <span className="text-purple-600 mt-1">•</span>
+                          <span>Over 1,700 contributors from around the world</span>
+                        </li>
+                        <li className="text-purple-800 flex items-start gap-2 text-xs">
+                          <span className="text-purple-600 mt-1">•</span>
+                          <span>First released in 2013, revolutionized web development</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <div className="pt-2">
+                      <p className="text-xs text-center text-muted-foreground">
+                        {session ? "Access the full playground to analyze any repository" : "Sign in to analyze any repository you want"}
+                      </p>
+                    </div>
+                  </CardContent>
                 </Card>
               </div>
             </div>
